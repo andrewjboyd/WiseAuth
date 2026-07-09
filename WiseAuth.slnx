@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="WiseAuth.UnitTests/WiseAuth.UnitTests.csproj" />
+  <Project Path="WiseAuth/WiseAuth.csproj" />
+</Solution>
