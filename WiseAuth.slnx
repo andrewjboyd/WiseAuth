@@ -1,4 +1,8 @@
 <Solution>
+  <Folder Name="/CI/" />
+  <Folder Name="/CI/GitHub.Actions/">
+    <File Path=".github\workflows\ci-cd.yml" />
+  </Folder>
   <Project Path="WiseAuth.Sample/WiseAuth.Sample.csproj" />
   <Project Path="WiseAuth.UnitTests/WiseAuth.UnitTests.csproj" />
   <Project Path="WiseAuth/WiseAuth.csproj" />
