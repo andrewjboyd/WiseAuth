@@ -144,6 +144,10 @@ app.MapGet("/auth/permissions", (IWiseAuthService wiseAuth) =>
 - No duplicate values.
 - Values must form a complete power-of-two sequence with no gaps (e.g., skipping 4 in the sequence 1, 2, 8 is invalid).
 
+## Sample project
+
+[`WiseAuth.Sample`](WiseAuth.Sample/README.md) is a runnable end-to-end demo: an ASP.NET Core API + embedded React app, SQLite via EF Core, ASP.NET Identity, and three seeded users (`Admin`, full access; `Viewer`, read-only; `Auditor`, read-only plus one extra permission) so you can see WiseAuth both allow and deny requests. It includes a small RBAC-style Security area — Users, Roles (native ASP.NET Identity roles), and a read-only Access Controls view — with three independently-registered permission enums composing on one principal, and a custom `IUserClaimsPrincipalFactory` that merges a user's role-granted and individually-granted permissions into the single effective claim WiseAuth actually enforces.
+
 ## Requirements
 
 - .NET 10.0

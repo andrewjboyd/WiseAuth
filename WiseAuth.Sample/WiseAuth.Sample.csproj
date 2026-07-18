@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+        <UserSecretsId>wiseauth-sample</UserSecretsId>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+        <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+        <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\WiseAuth\WiseAuth.csproj" />
+    </ItemGroup>
+
+    <!--
+      Builds the React app automatically so `dotnet run` just works without a manual npm step.
+      `dotnet run` executes the app directly after Build rather than invoking MSBuild's "Run"
+      target, so this hooks Build instead - guarded by $(CI), which GitHub Actions (and most CI
+      systems) set automatically, so the solution-wide `dotnet build`/`dotnet test` that CI runs
+      is completely unaffected. Inputs/Outputs give it a free incremental skip on unchanged builds.
+    -->
+    <ItemGroup>
+        <ClientAppSource Include="ClientApp/src/**/*.*;ClientApp/index.html;ClientApp/package.json;ClientApp/package-lock.json;ClientApp/vite.config.ts;ClientApp/tsconfig*.json" />
+    </ItemGroup>
+
+    <Target Name="BuildClientApp"
+            BeforeTargets="Build"
+            Condition="'$(CI)' != 'true'"
+            Inputs="@(ClientAppSource)"
+            Outputs="wwwroot/index.html">
+        <Exec Command="npm install" WorkingDirectory="$(MSBuildProjectDirectory)/ClientApp" Condition="!Exists('$(MSBuildProjectDirectory)/ClientApp/node_modules')" />
+        <Exec Command="npm run build" WorkingDirectory="$(MSBuildProjectDirectory)/ClientApp" />
+    </Target>
+
+</Project>
