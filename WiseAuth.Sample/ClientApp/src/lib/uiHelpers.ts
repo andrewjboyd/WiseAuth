@@ -38,7 +38,9 @@ export const inputClass =
 export function navLinkClass(isActive: boolean) {
   return classNames(
     'border-b-2 pb-1 text-sm no-underline',
-    isActive ? 'border-blue-600 font-semibold text-blue-600' : 'border-transparent text-gray-600 hover:text-gray-900',
+    isActive
+      ? 'border-blue-600 font-semibold text-blue-600'
+      : 'border-transparent text-gray-600 hover:border-gray-400 hover:text-gray-900',
   )
 }
 
