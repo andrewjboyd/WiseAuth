@@ -6,16 +6,27 @@
         <Nullable>enable</Nullable>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <Authors>Andrew Boyd</Authors>
+        <Description>A lightweight ASP.NET Core authorization library that uses power-of-two bit-flag enums and bitwise claim checking to enforce per-endpoint permissions.</Description>
+        <Copyright>Copyright (c) Andrew Boyd $([System.DateTime]::Now.Year)</Copyright>
+        <PackageTags>authorization;auth;aspnetcore;claims;permissions;bitmask;rbac</PackageTags>
         <PackageProjectUrl>https://github.com/andrewjboyd/WiseAuth</PackageProjectUrl>
         <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/andrewjboyd/WiseAuth</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <DebugType>embedded</DebugType>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageIcon>icon.png</PackageIcon>
+        <PackageReleaseNotes>https://github.com/andrewjboyd/WiseAuth/blob/main/CHANGELOG.md</PackageReleaseNotes>
         <MinVerTagPrefix>v</MinVerTagPrefix>
     </PropertyGroup>
 
     <ItemGroup>
         <None Include="..\README.md" Pack="true" PackagePath="\" />
+        <None Include="icon.png" Pack="true" PackagePath="\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -28,6 +39,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
     </ItemGroup>
 
 </Project>
