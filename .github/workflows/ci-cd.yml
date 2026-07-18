@@ -15,7 +15,7 @@ jobs:
         with:
           fetch-depth: 0 # full history + tags, needed by MinVer to compute the version
 
-      - uses: actions/setup-dotnet@v5
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: '10.0.x'
 
@@ -39,6 +39,7 @@ jobs:
 
   publish:
     needs: build-test
+    environment: production
     permissions:
       id-token: write  # enable GitHub OIDC token issuance for this job
     runs-on: ubuntu-latest
@@ -50,7 +51,7 @@ jobs:
           name: nuget-package
           path: ./artifacts
 
-      - uses: actions/setup-dotnet@v5
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: '10.0.x'
 
