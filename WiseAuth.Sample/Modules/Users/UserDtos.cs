@@ -1,4 +1,4 @@
-namespace WiseAuth.Sample.Users;
+namespace WiseAuth.Sample.Modules.Users;
 
 public record UserSummary(string Id, string UserName, string DisplayName, string Email, Dictionary<string, ulong> EffectivePermissions);
 

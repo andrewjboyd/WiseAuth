@@ -1,6 +1,4 @@
-using WiseAuth;
-
-namespace WiseAuth.Sample.Users;
+namespace WiseAuth.Sample.Modules.Users;
 
 [ClaimType("users")]
 public enum UserPermissions

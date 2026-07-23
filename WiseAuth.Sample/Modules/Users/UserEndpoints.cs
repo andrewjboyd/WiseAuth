@@ -1,10 +1,9 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using WiseAuth;
 using WiseAuth.Sample.Data;
 
-namespace WiseAuth.Sample.Users;
+namespace WiseAuth.Sample.Modules.Users;
 
 public static class UserEndpoints
 {

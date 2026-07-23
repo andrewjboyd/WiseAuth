@@ -1,0 +1,49 @@
+root = true
+
+[**/bin/**]
+generated_code = true
+
+[**/obj/**]
+generated_code = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+[*.cs]
+csharp_preserve_single_line_statements = true
+csharp_preserve_single_line_blocks = true
+csharp_style_namespace_declarations = file_scoped:warning
+
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
+dotnet_diagnostic.IDE0005.severity = warning
+
+# Constants stay PascalCase regardless of accessibility - evaluated before the private-field
+# rule below so a `private const` doesn't fall through and get an underscore prefix.
+dotnet_naming_rule.constants_pascal_case.severity = warning
+dotnet_naming_rule.constants_pascal_case.symbols  = constant_fields
+dotnet_naming_rule.constants_pascal_case.style    = pascal_case_style
+
+dotnet_naming_symbols.constant_fields.applicable_kinds     = field
+dotnet_naming_symbols.constant_fields.required_modifiers   = const
+
+dotnet_naming_style.pascal_case_style.capitalization = pascal_case
+
+# Private fields should begin with an underscore
+dotnet_naming_rule.private_fields_underscored.severity = warning
+dotnet_naming_rule.private_fields_underscored.symbols  = private_fields
+dotnet_naming_rule.private_fields_underscored.style    = underscore_prefix
+
+dotnet_naming_symbols.private_fields.applicable_kinds          = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+
+dotnet_naming_style.underscore_prefix.required_prefix = _
+dotnet_naming_style.underscore_prefix.capitalization   = camel_case
+
+[*.{g.cs,designer.cs,generated.cs}]
+generated_code = true

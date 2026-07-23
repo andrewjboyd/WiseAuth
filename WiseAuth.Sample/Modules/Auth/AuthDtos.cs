@@ -1,4 +1,4 @@
-namespace WiseAuth.Sample.Auth;
+namespace WiseAuth.Sample.Modules.Auth;
 
 public record LoginRequest(string UserName, string Password);
 

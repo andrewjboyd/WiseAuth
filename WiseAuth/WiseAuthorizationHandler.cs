@@ -1,27 +1,22 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace WiseAuth;
 
-internal sealed class WiseAuthorizationHandler<T>(ILogger<WiseAuthorizationHandler<T>> logger) : IAuthorizationHandler
+// Deriving from AuthorizationHandler<TRequirement> (rather than raw IAuthorizationHandler) pulls
+// the requirement straight from context.PendingRequirements, so this works no matter how the
+// requirement was attached - minimal APIs via WiseAuthHelpers.EndpointId's WithMetadata call, or
+// controller actions via EndpointIdAttribute<T>'s IAuthorizationRequirementData.GetRequirements.
+// An HttpContext.GetEndpoint() metadata lookup (the previous approach) only sees the latter as
+// the attribute instance, never the WiseAuthMetadata<T> requirement itself, so it can't be used
+// to support both hosting models uniformly.
+internal sealed class WiseAuthorizationHandler<T>(ILogger<WiseAuthorizationHandler<T>> logger) : AuthorizationHandler<WiseAuthMetadata<T>>
     where T : Enum
 {
-    public Task HandleAsync(AuthorizationHandlerContext context)
+    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, WiseAuthMetadata<T> requirement)
     {
-        if (context.Resource is not HttpContext httpContext)
-        {
-            return Task.CompletedTask;
-        }
+        logger.LogInformation("Evaluating authorization requirement for EndPointId: {MetadataEndpointId}", requirement.EndpointId);
 
-        var metadata = httpContext.GetEndpoint()?.Metadata.GetMetadata<WiseAuthMetadata<T>>();
-        if (metadata is null)
-        {
-            return Task.CompletedTask;
-        }
-
-        logger.LogInformation("Evaluating authorization requirement for EndPointId: {MetadataEndpointId}", metadata.EndpointId);
-        
         var authClaim = context.User.FindFirst(c => c.Type.Equals(WiseAuthMetadata<T>.ClaimType, StringComparison.OrdinalIgnoreCase));
         if (authClaim is null)
         {
@@ -34,10 +29,9 @@ internal sealed class WiseAuthorizationHandler<T>(ILogger<WiseAuthorizationHandl
             return Task.CompletedTask;
         }
 
-        var endPointIdentifier = metadata.EndpointId;
-        if ((endPointPermissions & endPointIdentifier) != 0)
+        if ((endPointPermissions & requirement.EndpointId) != 0)
         {
-            context.Succeed(metadata);
+            context.Succeed(requirement);
         }
 
         return Task.CompletedTask;

@@ -61,6 +61,8 @@ Multiple calls are safe — `IWiseAuthService` is registered as a singleton only
 
 ### 3. Protect routes
 
+#### Minimal APIs
+
 Use the `.EndpointId<T>()` extension method on any `RouteHandlerBuilder`. This attaches the requirement metadata and calls `RequireAuthorization()` automatically.
 
 ```csharp
@@ -72,6 +74,25 @@ app.MapPost("/products", CreateProduct)
 
 app.MapDelete("/products/{id}", DeleteProduct)
    .EndpointId(ProductController.Permissions.Delete);
+```
+
+#### Attribute-routed controllers
+
+For `[ApiController]`-based controllers, apply `[EndpointId<T>(value)]` to an action (or the whole controller). It derives from `AuthorizeAttribute` and attaches the same requirement the minimal-API extension does, so it's enforced by the same registered `IAuthorizationHandler<T>` — no other setup differs.
+
+```csharp
+[ApiController]
+[Route("api/products")]
+public class ProductsController : ControllerBase
+{
+    [HttpGet]
+    [EndpointId<ProductController.Permissions>(ProductController.Permissions.Read)]
+    public IActionResult GetProducts() => Ok(...);
+
+    [HttpPost]
+    [EndpointId<ProductController.Permissions>(ProductController.Permissions.Write)]
+    public IActionResult CreateProduct(CreateProductRequest request) => Created(...);
+}
 ```
 
 ### 4. Issue claims

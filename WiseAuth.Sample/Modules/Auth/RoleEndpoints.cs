@@ -1,10 +1,9 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using WiseAuth;
 using WiseAuth.Sample.Data;
 
-namespace WiseAuth.Sample.Roles;
+namespace WiseAuth.Sample.Modules.Roles;
 
 public static class RoleEndpoints
 {

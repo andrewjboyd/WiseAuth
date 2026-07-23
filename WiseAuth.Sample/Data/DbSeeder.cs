@@ -1,8 +1,8 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
-using WiseAuth.Sample.Products;
-using WiseAuth.Sample.Roles;
-using WiseAuth.Sample.Users;
+using WiseAuth.Sample.Modules.Products;
+using WiseAuth.Sample.Modules.Roles;
+using WiseAuth.Sample.Modules.Users;
 
 namespace WiseAuth.Sample.Data;
 

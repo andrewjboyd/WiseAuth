@@ -1,13 +1,13 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WiseAuth;
-using WiseAuth.Sample.Auth;
 using WiseAuth.Sample.Data;
-using WiseAuth.Sample.Products;
-using WiseAuth.Sample.Roles;
+using WiseAuth.Sample.Modules.Auth;
+using WiseAuth.Sample.Modules.Products;
+using WiseAuth.Sample.Modules.Roles;
+using WiseAuth.Sample.Modules.Users;
 using WiseAuth.Sample.Security;
-using WiseAuth.Sample.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +47,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddDataProtection()
     .PersistKeysToDbContext<AppDbContext>();
 
+builder.Services.AddControllers();
 builder.Services.AddAuthorization();
 builder.Services.AddWiseAuth<ProductPermissions>();
 builder.Services.AddWiseAuth<UserPermissions>();
@@ -66,7 +67,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapAuthEndpoints();
-app.MapProductEndpoints();
+// Products uses attribute-routed ApiController + [EndpointId<T>] instead of minimal API's
+// .EndpointId() extension, to demonstrate WiseAuth's controller-based support.
+app.MapControllers();
 app.MapUserEndpoints();
 app.MapRoleEndpoints();
 

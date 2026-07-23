@@ -14,7 +14,7 @@ internal class WiseAuthDetails<T>
             .ToList();
         EndpointDetails = [.. details];
     }
-    
+
     public string ClaimType { get; }
     public EndpointDetail[] EndpointDetails { get; }
 }

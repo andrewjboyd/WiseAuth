@@ -1,4 +1,4 @@
-namespace WiseAuth.Sample.Products;
+namespace WiseAuth.Sample.Modules.Products;
 
 public class Product
 {

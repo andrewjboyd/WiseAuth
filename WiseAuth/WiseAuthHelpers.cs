@@ -19,7 +19,7 @@ public static class WiseAuthHelpers
     {
         return GetCustomClaimType(enumType) ?? GetClaimType(enumType.FullName);
     }
-    
+
     private static string GetClaimType(string? enumFullName)
     {
         if (enumFullName is null)
@@ -49,7 +49,7 @@ public static class WiseAuthHelpers
     {
         return s.Length == 0 ? s : $"{char.ToUpper(s[0])}{s[1..]}";
     }
-    
+
     private static string? GetCustomClaimType(Type enumType)
     {
         var attribute = Attribute.GetCustomAttribute(enumType, typeof(ClaimTypeAttribute)) as ClaimTypeAttribute;

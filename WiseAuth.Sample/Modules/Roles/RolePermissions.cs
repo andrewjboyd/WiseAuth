@@ -1,6 +1,4 @@
-using WiseAuth;
-
-namespace WiseAuth.Sample.Roles;
+namespace WiseAuth.Sample.Modules.Roles;
 
 [ClaimType("roles")]
 public enum RolePermissions

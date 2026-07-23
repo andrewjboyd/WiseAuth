@@ -1,4 +1,4 @@
-namespace WiseAuth.Sample.Products;
+namespace WiseAuth.Sample.Modules.Products;
 
 public record ProductResponse(int Id, string Sku, string Name, decimal Price, int Quantity, DateTime CreatedUtc)
 {

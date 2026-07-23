@@ -1,4 +1,4 @@
-namespace WiseAuth.Sample.Roles;
+namespace WiseAuth.Sample.Modules.Roles;
 
 public record RoleSummary(string Id, string Name, Dictionary<string, ulong> Permissions);
 

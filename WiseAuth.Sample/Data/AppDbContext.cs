@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using WiseAuth.Sample.Products;
+using WiseAuth.Sample.Modules.Products;
 
 namespace WiseAuth.Sample.Data;
 
@@ -16,7 +16,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     {
         base.OnModelCreating(builder);
 
-        // Backstop for ProductEndpoints' application-level duplicate-Sku check: two
+        // Backstop for ProductsController's application-level duplicate-Sku check: two
         // concurrent requests can both pass that check before either has saved, so the
         // database constraint is what actually prevents the race from producing two
         // rows with the same Sku.

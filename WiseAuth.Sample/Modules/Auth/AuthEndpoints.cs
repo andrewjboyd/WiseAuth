@@ -1,9 +1,8 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
-using WiseAuth;
 using WiseAuth.Sample.Data;
 
-namespace WiseAuth.Sample.Auth;
+namespace WiseAuth.Sample.Modules.Auth;
 
 public static class AuthEndpoints
 {
