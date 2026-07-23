@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/GitHub.Actions/">
     <File Path=".github\workflows\ci-cd.yml" />
+    <File Path="CHANGELOG.md" />
   </Folder>
   <Project Path="WiseAuth.Sample/WiseAuth.Sample.csproj" />
   <Project Path="WiseAuth.UnitTests/WiseAuth.UnitTests.csproj" />
