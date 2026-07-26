@@ -1,3 +1,4 @@
+using FastEndpoints;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +49,7 @@ builder.Services.AddDataProtection()
     .PersistKeysToDbContext<AppDbContext>();
 
 builder.Services.AddControllers();
+builder.Services.AddFastEndpoints();
 builder.Services.AddAuthorization();
 builder.Services.AddWiseAuth<ProductPermissions>();
 builder.Services.AddWiseAuth<UserPermissions>();
@@ -70,7 +72,11 @@ app.MapAuthEndpoints();
 // Products uses attribute-routed ApiController + [EndpointId<T>] instead of minimal API's
 // .EndpointId() extension, to demonstrate WiseAuth's controller-based support.
 app.MapControllers();
-app.MapUserEndpoints();
+// Users uses FastEndpoints instead of minimal API's .EndpointId() extension, to demonstrate
+// WiseAuth's compatibility with third-party routing libraries - each endpoint class attaches
+// the same WiseAuthMetadata<T> requirement via the underlying RouteHandlerBuilder exposed by
+// FastEndpoints' Options(), so it's enforced by the same registered IAuthorizationHandler<T>.
+app.UseFastEndpoints();
 app.MapRoleEndpoints();
 
 // Runtime discovery of registered permission enums, as described in the WiseAuth README.

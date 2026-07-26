@@ -6,8 +6,7 @@ namespace WiseAuth;
 public static class WiseAuthHelpers
 {
     public static RouteHandlerBuilder EndpointId<T>(
-        this RouteHandlerBuilder builder,
-        T endpointId)
+        this RouteHandlerBuilder builder, T endpointId)
         where T : Enum
     {
         return builder
