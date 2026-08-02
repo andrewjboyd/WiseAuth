@@ -90,3 +90,7 @@ app.MapFallback("/api/{**path}", () => Results.NotFound());
 app.MapFallbackToFile("index.html");
 
 app.Run();
+
+// Exposed so WebApplicationFactory<Program> in WiseAuth.Sample.IntegrationTests can host this
+// app in-process; top-level statements otherwise generate an internal Program class.
+public partial class Program;

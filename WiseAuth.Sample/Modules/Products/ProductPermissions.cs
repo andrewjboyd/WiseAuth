@@ -1,6 +1,7 @@
 namespace WiseAuth.Sample.Modules.Products;
 
 [ClaimType("products")]
+[Flags]
 public enum ProductPermissions
 {
     Read = 1,
