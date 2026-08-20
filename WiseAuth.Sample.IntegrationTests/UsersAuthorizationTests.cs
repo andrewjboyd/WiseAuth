@@ -174,11 +174,8 @@ public class UsersAuthorizationTests
         response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
     }
 
-    private static async Task<string> GetUserIdAsync(HttpClient adminClient, string userName)
-    {
-        var users = await adminClient.GetFromJsonAsync<UserSummary[]>("/api/users");
-        return users!.First(u => u.UserName == userName).Id;
-    }
+    private static Task<string> GetUserIdAsync(HttpClient adminClient, string userName) =>
+        adminClient.GetIdAsync<UserSummary, string>("/api/users", u => u.UserName == userName, u => u.Id);
 
     // Positive claims/profile/roles-update tests act on a throwaway user created here rather
     // than a seeded one: editing Admin's own claims/roles is blocked by a self-edit business

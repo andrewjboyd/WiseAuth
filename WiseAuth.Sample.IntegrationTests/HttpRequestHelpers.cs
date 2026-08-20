@@ -17,4 +17,12 @@ internal static class HttpRequestHelpers
 
         return client.SendAsync(request);
     }
+
+    // Shared by the Products/Roles/Users authorization tests, which all need to look up the
+    // id of a specific seeded or freshly created record before exercising a by-id endpoint.
+    public static async Task<TId> GetIdAsync<TResponse, TId>(this HttpClient client, string route, Func<TResponse, bool> predicate, Func<TResponse, TId> idSelector)
+    {
+        var items = await client.GetFromJsonAsync<TResponse[]>(route);
+        return idSelector(items!.First(predicate));
+    }
 }

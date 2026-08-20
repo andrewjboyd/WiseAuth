@@ -168,11 +168,8 @@ public class ProductsAuthorizationTests
         response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
     }
 
-    private static async Task<int> GetSeededProductIdAsync(HttpClient adminClient)
-    {
-        var products = await adminClient.GetFromJsonAsync<ProductResponse[]>("/api/products");
-        return products!.First(p => p.Sku == "WA-001").Id;
-    }
+    private static Task<int> GetSeededProductIdAsync(HttpClient adminClient) =>
+        adminClient.GetIdAsync<ProductResponse, int>("/api/products", p => p.Sku == "WA-001", p => p.Id);
 
     // Positive Update/Delete tests act on a throwaway product created here rather than a seeded
     // one, so they stay safe to run in parallel with everything else without racing over shared rows.

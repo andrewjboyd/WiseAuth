@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using TUnit.Core.Interfaces;
 
@@ -24,10 +25,20 @@ public class SampleAppFactory : WebApplicationFactory<Program>, IAsyncInitialize
     // first CreateClient() call, and TUnit does not serialize that against other classes
     // concurrently doing the same thing, so two hosts could both try to create the same
     // Sqlite schema at once.
-    public Task InitializeAsync()
+    public async Task InitializeAsync()
     {
         _ = Server;
-        return Task.CompletedTask;
+
+        // Every test class shares this one Sqlite file and TUnit runs their write-heavy
+        // methods in parallel. The default rollback-journal mode locks the whole file for
+        // any writer; WAL mode lets readers and a writer proceed concurrently instead, so
+        // contention stays well inside Microsoft.Data.Sqlite's busy_timeout rather than
+        // risking an intermittent SQLITE_BUSY failure.
+        await using var connection = new SqliteConnection($"Data Source={DbFileName}");
+        await connection.OpenAsync();
+        await using var command = connection.CreateCommand();
+        command.CommandText = "PRAGMA journal_mode=WAL;";
+        await command.ExecuteNonQueryAsync();
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -48,7 +59,9 @@ public class SampleAppFactory : WebApplicationFactory<Program>, IAsyncInitialize
     // TUnit's *first* call already races against its own teardown machinery and the base
     // WebApplicationFactory NREs on its own partially-torn-down state. Either way this only
     // ever fires during teardown, after the test's real assertions already ran - it should
-    // never mask an actual test failure.
+    // never mask an actual test failure. The Source filter keeps this from also swallowing
+    // an unrelated NRE thrown while disposing a registered service (e.g. AppDbContext or the
+    // DataProtection key store), which would come from a different assembly.
     public override async ValueTask DisposeAsync()
     {
         if (Interlocked.Exchange(ref _disposed, 1) == 1)
@@ -60,7 +73,7 @@ public class SampleAppFactory : WebApplicationFactory<Program>, IAsyncInitialize
         {
             await base.DisposeAsync();
         }
-        catch (NullReferenceException)
+        catch (NullReferenceException ex) when (ex.Source == "Microsoft.AspNetCore.Mvc.Testing")
         {
         }
     }

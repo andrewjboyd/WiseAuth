@@ -97,11 +97,8 @@ public class RolesAuthorizationTests
         response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
     }
 
-    private static async Task<string> GetRoleIdAsync(HttpClient adminClient, string roleName)
-    {
-        var roles = await adminClient.GetFromJsonAsync<RoleSummary[]>("/api/roles");
-        return roles!.First(r => r.Name == roleName).Id;
-    }
+    private static Task<string> GetRoleIdAsync(HttpClient adminClient, string roleName) =>
+        adminClient.GetIdAsync<RoleSummary, string>("/api/roles", r => r.Name == roleName, r => r.Id);
 
     // Positive permission-update tests act on a throwaway role created here rather than a
     // seeded one: Admin belongs to "Admins", and editing the permissions of a role you belong
