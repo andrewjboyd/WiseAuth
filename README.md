@@ -95,6 +95,24 @@ public class ProductsController : ControllerBase
 }
 ```
 
+#### FastEndpoints
+
+[FastEndpoints](https://fast-endpoints.com/) works with the same `.EndpointId<T>()` extension. Inside an endpoint's `Configure()`, `Options(b => ...)` exposes the underlying minimal-API `RouteHandlerBuilder`, so the identical requirement metadata is attached and enforced by the same registered handler — no FastEndpoints-specific setup.
+
+```csharp
+public class GetProductsEndpoint : EndpointWithoutRequest
+{
+    public override void Configure()
+    {
+        Get("/products");
+        Options(b => b.EndpointId(ProductController.Permissions.Read));
+    }
+
+    public override async Task HandleAsync(CancellationToken ct) =>
+        await SendOkAsync(..., ct);
+}
+```
+
 ### 4. Issue claims
 
 When issuing tokens, store the user's permissions as the sum (equivalently, the bitwise OR) of their allowed power-of-two values for each claim type:
@@ -168,6 +186,26 @@ app.MapGet("/auth/permissions", (IWiseAuthService wiseAuth) =>
 ## Sample project
 
 [`WiseAuth.Sample`](WiseAuth.Sample/README.md) is a runnable end-to-end demo: an ASP.NET Core API + embedded React app, SQLite via EF Core, ASP.NET Identity, and three seeded users (`Admin`, full access; `Viewer`, read-only; `Auditor`, read-only plus one extra permission) so you can see WiseAuth both allow and deny requests. It includes a small RBAC-style Security area — Users, Roles (native ASP.NET Identity roles), and a read-only Access Controls view — with three independently-registered permission enums composing on one principal, and a custom `IUserClaimsPrincipalFactory` that merges a user's role-granted and individually-granted permissions into the single effective claim WiseAuth actually enforces.
+
+The sample demonstrates WiseAuth against three routing styles: minimal APIs (Roles), attribute-routed `[ApiController]` controllers (Products), and FastEndpoints (Users). It uses a BFF-style login: the session is an HttpOnly, Secure, SameSite=Strict cookie, so nothing reaches browser JavaScript, and the React app only sees `{ displayName, permissions }`.
+
+### Running the sample
+
+Prerequisites: .NET 10 SDK, Node 20+.
+
+```bash
+cd WiseAuth.Sample
+dotnet run
+```
+
+An MSBuild target runs `npm install`/`npm run build` automatically before `Build` (skipped when the `CI` environment variable is `true`), so no separate npm step is needed. Open the printed `https://localhost:...` URL and log in as `Admin` (`Admin123!`), `Viewer` (`Viewer123!`), or `Auditor` (`Auditor123!`). These are dev-only credentials. The SQLite database (`wiseauth-sample.db`) is created and seeded on first run.
+
+For frontend hot-reload, run `dotnet run` alongside the Vite dev server (it proxies `/api` to `http://localhost:5100`):
+
+```bash
+cd WiseAuth.Sample/ClientApp
+npm run dev
+```
 
 ## Requirements
 
