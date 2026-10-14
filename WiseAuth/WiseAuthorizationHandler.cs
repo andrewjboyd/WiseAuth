@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 
 namespace WiseAuth;
@@ -10,14 +12,23 @@ namespace WiseAuth;
 // An HttpContext.GetEndpoint() metadata lookup (the previous approach) only sees the latter as
 // the attribute instance, never the WiseAuthMetadata<T> requirement itself, so it can't be used
 // to support both hosting models uniformly.
-internal sealed class WiseAuthorizationHandler<T>(ILogger<WiseAuthorizationHandler<T>> logger) : AuthorizationHandler<WiseAuthMetadata<T>>
+internal sealed class WiseAuthorizationHandler<T>(ILogger<WiseAuthorizationHandler<T>> logger)
+    : AuthorizationHandler<WiseAuthMetadata<T>>
     where T : Enum
 {
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, WiseAuthMetadata<T> requirement)
     {
-        logger.LogInformation("Evaluating authorization requirement for EndPointId: {MetadataEndpointId}", requirement.EndpointId);
+        logger.LogInformation("Evaluating authorization requirement for EndPointId: {MetadataEndpointId}",
+            requirement.EndpointId);
 
-        var authClaim = context.User.FindFirst(c => c.Type.Equals(WiseAuthMetadata<T>.ClaimType, StringComparison.OrdinalIgnoreCase));
+        if (AllowsAnonymous(context))
+        {
+            context.Succeed(requirement);
+            return Task.CompletedTask;
+        }
+
+        var authClaim = context.User.FindFirst(c =>
+            c.Type.Equals(WiseAuthMetadata<T>.ClaimType, StringComparison.OrdinalIgnoreCase));
         if (authClaim is null)
         {
             return Task.CompletedTask;
@@ -25,7 +36,8 @@ internal sealed class WiseAuthorizationHandler<T>(ILogger<WiseAuthorizationHandl
 
         if (!ulong.TryParse(authClaim.Value, out var endPointPermissions))
         {
-            logger.LogError("Could not convert '{AuthClaimValue}' to a long for claim type {AuthClaimType}", authClaim.Value, authClaim.Type);
+            logger.LogError("Could not convert '{AuthClaimValue}' to a long for claim type {AuthClaimType}",
+                authClaim.Value, authClaim.Type);
             return Task.CompletedTask;
         }
 
@@ -35,5 +47,17 @@ internal sealed class WiseAuthorizationHandler<T>(ILogger<WiseAuthorizationHandl
         }
 
         return Task.CompletedTask;
+    }
+
+    private static bool AllowsAnonymous(AuthorizationHandlerContext context)
+    {
+        return context.Resource switch
+        {
+            HttpContext httpContext => httpContext.GetEndpoint()?.Metadata.GetMetadata<IAllowAnonymous>() is not null,
+            AuthorizationFilterContext filterContext =>
+                filterContext.ActionDescriptor.EndpointMetadata.OfType<IAllowAnonymous>().Any() ||
+                filterContext.HttpContext.GetEndpoint()?.Metadata.GetMetadata<IAllowAnonymous>() is not null,
+            _ => false,
+        };
     }
 }

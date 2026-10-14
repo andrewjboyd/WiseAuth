@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using TUnit.Core.Interfaces;
 
 namespace WiseAuth.Sample.IntegrationTests;
@@ -43,6 +44,9 @@ public class SampleAppFactory : WebApplicationFactory<Program>, IAsyncInitialize
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.ConfigureServices(services =>
+            services.AddControllers().AddApplicationPart(typeof(AllowAnonymousTestController).Assembly));
+
         builder.ConfigureAppConfiguration((_, config) =>
         {
             config.AddInMemoryCollection(new Dictionary<string, string?>
