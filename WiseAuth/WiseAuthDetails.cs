@@ -1,3 +1,6 @@
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
+
 namespace WiseAuth;
 
 internal class WiseAuthDetails<T>
@@ -10,7 +13,12 @@ internal class WiseAuthDetails<T>
         var enumValues = Enum.GetValues<T>();
 
         var details = enumNames
-            .Select((t, idx) => new EndpointDetail(Convert.ToUInt64(enumValues[idx]), t))
+            .Select((name, idx) =>
+            {
+                var display = typeof(T).GetField(name)?.GetCustomAttribute<DisplayAttribute>();
+                return new EndpointDetail(Convert.ToUInt64(enumValues[idx]), name,
+                    display?.GetName(), display?.GetDescription());
+            })
             .ToList();
         EndpointDetails = [.. details];
     }
