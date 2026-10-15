@@ -17,7 +17,7 @@ export function PermissionSummaryList({ schema, value }: PermissionSummaryListPr
         return (
           <div key={claimType}>
             <strong>{claimType}: </strong>
-            {held.length > 0 ? held.map((detail) => detail.name).join(', ') : <span className="text-gray-400">none</span>}
+            {held.length > 0 ? held.map((detail) => detail.title).join(', ') : <span className="text-gray-400">none</span>}
           </div>
         )
       })}

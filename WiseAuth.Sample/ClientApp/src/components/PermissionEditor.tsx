@@ -1,6 +1,8 @@
 export interface EndpointDetail {
   id: number
   name: string
+  title: string
+  description: string
 }
 
 export type PermissionsSchema = Record<string, EndpointDetail[]>
@@ -23,7 +25,7 @@ export function PermissionEditor({ schema, value, onChange }: PermissionEditorPr
           <fieldset key={claimType} className="rounded-md border border-gray-200 px-2.5 py-1.5">
             <legend className="px-1 text-xs uppercase text-gray-500">{claimType}</legend>
             {details.map((detail) => (
-              <label key={detail.id} className="flex items-center gap-1.5 whitespace-nowrap text-sm text-gray-700">
+              <label key={detail.id} title={detail.description || undefined} className="flex items-center gap-1.5 whitespace-nowrap text-sm text-gray-700">
                 <input
                   type="checkbox"
                   className="h-3.5 w-3.5"
@@ -37,7 +39,7 @@ export function PermissionEditor({ schema, value, onChange }: PermissionEditorPr
                     onChange(claimType, Number(next))
                   }}
                 />
-                {detail.name}
+                {detail.title}
               </label>
             ))}
           </fieldset>

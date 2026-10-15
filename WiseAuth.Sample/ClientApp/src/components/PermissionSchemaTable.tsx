@@ -15,7 +15,8 @@ export function PermissionSchemaTable({ schema }: PermissionSchemaTableProps) {
           <ul className="m-0 list-disc pl-5 text-sm text-gray-700">
             {details.map((detail) => (
               <li key={detail.id}>
-                {detail.name} <code className="text-xs text-gray-500">({detail.id})</code>
+                {detail.title} <code className="text-xs text-gray-500">({detail.id})</code>
+                {detail.description && <p className="mt-0.5 text-xs text-gray-500">{detail.description}</p>}
               </li>
             ))}
           </ul>

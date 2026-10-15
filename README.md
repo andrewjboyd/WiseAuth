@@ -18,14 +18,26 @@ Because each permission occupies its own bit, any combination of permissions can
 Values **must** form a power-of-two sequence starting at 1 with no gaps (1, 2, 4, 8, 16, …). The order of members in the enum does not matter; the validator sorts them before checking.
 
 ```csharp
+using System.ComponentModel.DataAnnotations;
+
+[ClaimType("products")]
 public enum ProductPermissions
 {
+    [Display(Name = "View products", Description = "View the product catalog.")]
     Read   = 1,
+    [Display(Name = "Manage products", Description = "Create and update product records.")]
     Write  = 2,
+    [Display(Name = "Delete products", Description = "Permanently remove product records.")]
     Delete = 4,
+    [Display(Name = "Export products", Description = "Download the product catalog as a CSV file.")]
     Export = 8,
 }
 ```
+
+`[Display]` metadata is optional. Its `Name` becomes the permission title and its
+`Description` is included in the endpoint details schema; missing or whitespace
+names fall back to the enum member name, and missing descriptions become empty
+strings.
 
 If the enum is nested inside a controller class, the claim type is derived automatically by stripping the `Controller` suffix. For a fully custom name, apply `[ClaimType]`:
 

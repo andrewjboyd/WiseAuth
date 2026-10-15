@@ -10,13 +10,23 @@ This is same-origin end to end (the SPA is served by this same app), so the cook
 
 ## Permissions
 
+`DisplayAttribute` gives each permission a friendly title and description for the
+schema-driven editor and Access Controls catalog. Permissions without a
+`Display` name use their enum member name, and omitted descriptions are empty.
+
 ```csharp
+using System.ComponentModel.DataAnnotations;
+
 [ClaimType("products")]
 public enum ProductPermissions
 {
+    [Display(Name = "View products", Description = "View the product catalog.")]
     Read = 1,
+    [Display(Name = "Manage products", Description = "Create and update product records.")]
     Write = 2,
+    [Display(Name = "Delete products", Description = "Permanently remove product records.")]
     Delete = 4,
+    [Display(Name = "Export products", Description = "Download the product catalog as a CSV file.")]
     Export = 8,
 }
 
